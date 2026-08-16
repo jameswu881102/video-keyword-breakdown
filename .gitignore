@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.skill
+*.zip
+.DS_Store
+.venv/
+venv/
+.idea/
+.vscode/
+
+# 技能运行时产物：只忽略输出目录，不要按文件名忽略——
+# 那会连 tests/fixtures/ 下的样本一起吃掉。
+edit/
+*.mp4
+*.mov

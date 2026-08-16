@@ -1,0 +1,9 @@
+{
+  "analysis_status": "awaiting_human_confirmation",
+  "source_video": "sample.mp4",
+  "required_confirmation": [
+    "确认文字稿校正",
+    "确认 tier1 判断",
+    "确认字幕字号"
+  ]
+}

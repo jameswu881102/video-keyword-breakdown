@@ -1,0 +1,26 @@
+{
+  "keywords": [
+    {
+      "visual_tier": "tier1_standalone_dynamic",
+      "tag": "NUMBER_STAT",
+      "text": "百分之80",
+      "start": 3.1,
+      "end": 6.48,
+      "reason": "量化对比，是全片最强记忆点",
+      "screen_position": "center",
+      "suggested_treatment": "独立大字弹出，数字放大 1.5 倍",
+      "confidence": "high"
+    },
+    {
+      "visual_tier": "tier2_inline_emphasis",
+      "tag": "CTA",
+      "text": "打开你的剪辑软件",
+      "start": 9.9,
+      "end": 13.2,
+      "reason": "行动指令，需在字幕内强调",
+      "screen_position": "bottom",
+      "suggested_treatment": "字幕内变色加粗",
+      "confidence": "medium"
+    }
+  ]
+}

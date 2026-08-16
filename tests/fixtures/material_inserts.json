@@ -1,0 +1,14 @@
+{
+  "inserts": [
+    {
+      "spoken_text": "我用这个方法把它压到20分钟",
+      "start": 6.48,
+      "end": 9.9,
+      "insert_type": "screen_recording",
+      "material_source": "local_required",
+      "content_requirements": "录屏展示实际操作流程，1080x1920，时长约3秒",
+      "asset_status": "missing",
+      "ai_generation_allowed": false
+    }
+  ]
+}

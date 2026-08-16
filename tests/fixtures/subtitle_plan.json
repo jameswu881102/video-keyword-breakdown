@@ -1,0 +1,18 @@
+{
+  "subtitles": [
+    {
+      "start": 0.32,
+      "end": 3.1,
+      "font_size_px": 68,
+      "screen_position": "bottom",
+      "legibility_risk": "low"
+    },
+    {
+      "start": 3.1,
+      "end": 6.48,
+      "font_size_px": 96,
+      "screen_position": "center",
+      "legibility_risk": "high"
+    }
+  ]
+}

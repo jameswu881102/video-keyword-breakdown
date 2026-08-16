@@ -1,0 +1,57 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # 没有 pip install 步骤：本技能只用 Python 标准库，不需要 ffmpeg，不联网。
+
+      - name: Run test suite
+        run: python tests/test_scripts.py
+
+      - name: Install via install.sh (macOS / Linux)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.claude" "$HOME/.codex"
+          bash install.sh
+          test -f "$HOME/.claude/skills/video-keyword-breakdown/SKILL.md"
+          test -f "$HOME/.codex/skills/video-keyword-breakdown/SKILL.md"
+          # 重复安装不得重复追加规约
+          before=$(wc -l < "$HOME/.claude/CLAUDE.md")
+          bash install.sh > /dev/null
+          after=$(wc -l < "$HOME/.claude/CLAUDE.md")
+          test "$before" = "$after"
+
+      - name: Install via install.ps1 (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "$HOME\.claude", "$HOME\.codex" | Out-Null
+          .\install.ps1
+          if (-not (Test-Path "$HOME\.claude\skills\video-keyword-breakdown\SKILL.md")) { exit 1 }
+          if (-not (Test-Path "$HOME\.codex\skills\video-keyword-breakdown\SKILL.md"))  { exit 1 }
+          $before = (Get-Content "$HOME\.claude\CLAUDE.md").Count
+          .\install.ps1 | Out-Null
+          $after = (Get-Content "$HOME\.claude\CLAUDE.md").Count
+          if ($before -ne $after) { Write-Error "规约被重复追加"; exit 1 }
+
+      - name: Validator runs from the installed location
+        shell: bash
+        run: |
+          python "$HOME/.claude/skills/video-keyword-breakdown/scripts/validate_analysis_outputs.py" --help
