@@ -77,7 +77,8 @@ def main() -> int:
             lines.append("- 人工确认：是")
         lines.append("")
     args.output_md.parent.mkdir(parents=True, exist_ok=True)
-    args.output_md.write_text("\n".join(lines), encoding="utf-8")
+    with args.output_md.open("w", encoding="utf-8", newline="\n") as _f:
+        _f.write("\n".join(lines))
     print(f"✅ 素材上传/调用清单: {args.output_md}")
     print(f"   共 {len(inserts)} 个素材需求；未执行任何资产调用")
     return 0

@@ -184,7 +184,8 @@ def main() -> None:
         "candidate_count": len(candidates),
         "candidates": candidates,
     }
-    args.out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    with args.out_json.open("w", encoding="utf-8", newline="\n") as _f:
+        _f.write(json.dumps(payload, ensure_ascii=False, indent=2))
     print(f"✅ 检测到 {len(candidates)} 个候选片段 → {args.out_json}")
     print("   下一步：结合完整文稿（和画面，如果有的话）与 references/keyword-taxonomy.md")
     print("   复核、去重、定级（tier1/tier2/tier3）、定档标签，分别写出：")

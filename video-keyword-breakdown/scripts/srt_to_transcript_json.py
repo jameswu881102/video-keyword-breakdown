@@ -96,7 +96,8 @@ def main() -> None:
 
     duration = segments[-1]["end"] if segments else 0.0
     payload = {"source": args.source, "duration": duration, "segments": segments}
-    args.out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    with args.out_path.open("w", encoding="utf-8", newline="\n") as _f:
+        _f.write(json.dumps(payload, ensure_ascii=False, indent=2))
     print(f"✅ 已生成 {args.out_path} （{len(segments)} 条片段，时长约 {duration:.1f}s）")
 
 
