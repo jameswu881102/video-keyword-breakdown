@@ -43,7 +43,10 @@ description: >
 
 如果用户只给 MP4/MOV，没有文字稿：停止在输入检查，明确要求用户上传 SRT、逐字稿或由上游总控流程先建立规范文字稿；不得自行安装依赖、调用媒体解析器或猜测台词时间。
 
-可写入路径：默认 `<文字稿所在目录>/edit/`，或用户明确指定的输出目录。输入文字稿、原始媒体、资产库和安装目录只读。遇到范围外问题记录并报告；需要删除或覆盖用户文件时先询问。
+可写入路径：默认 `<文字稿所在目录>/edit/`，或用户明确指定的输出目录。
+
+> **在 `talking-head-editing-workflow` 的项目目录里运行时例外**：一律写 `01_识别分析/关键词/`，不要建 `edit/`。那套项目结构有七个固定入口且「不能临时发明路径」，每阶段的 `validate_project_layout.py` 会因为多出来的 `edit/` 直接判失败。
+输入文字稿、原始媒体、资产库和安装目录只读。遇到范围外问题记录并报告；需要删除或覆盖用户文件时先询问。
 
 ## 输出清单与人工闸门
 
@@ -108,7 +111,8 @@ python3 "$PACKAGE_DIR/scripts/srt_to_transcript_json.py" \
 开始语义复核前读取：
 
 - `references/analysis-frameworks.md`：文案结构、节奏和 Viral-5D 分析；
-- `references/keyword-taxonomy.md`：tier、标签和 JSON 字段定义。
+- `references/keyword-taxonomy.md`：tier、标签和 JSON 字段定义；
+- `references/visual-treatment-spec.md`：定完级之后写什么规格——tier1 的六种呈现形式、逐行揭示、左主右证分屏、数字单位一致、tier3 素材约束。**定级完成后、写 `keywords_timeline.json` 之前必读。**
 
 先运行机械召回：
 
@@ -120,7 +124,7 @@ python3 "$PACKAGE_DIR/scripts/keyword_candidates.py" \
 
 再结合完整上下文和用户提供的画面证据人工复核：
 
-- `tier1_standalone_dynamic`：建议后续调用动态资产库生成独立大字、数字卡、标题卡或品牌强调；本技能只记录意图、时间和规格；
+- `tier1_standalone_dynamic`：建议后续调用动态资产库生成独立大字、数字卡、标题卡或品牌强调；本技能只记录意图、时间和规格。**呈现形式必须从 `visual-treatment-spec.md` 的六种里选一种填进 `visual_form`，不要只写"大字弹出"这种下游没法执行的描述；**
 - `tier2_inline_emphasis`：建议后续调用静态字幕资产库或字幕模板，在原字幕内做颜色、粗细、字号或局部强调；本技能只记录样式方案；
 - `tier3_external_insert`：需要额外录屏、截图、插图、视频或图表；本技能只提出素材需求和占位，不准备或叠加素材。
 
@@ -185,4 +189,25 @@ python3 "$PACKAGE_DIR/scripts/validate_analysis_outputs.py" \
 
 - `references/keyword-taxonomy.md`：关键词三级体系、标签和字段；语义复核前读取；
 - `references/analysis-frameworks.md`：文案结构、节奏和创意分析；报告前读取；
+- `references/visual-treatment-spec.md`：tier1/tier3 的呈现形式与定时规格；写 `keywords_timeline.json` 前读取；
 - `references/analysis-handoff.md`：方案包的交接协议；写完输出前读取。
+
+## Gotchas
+
+1. **不要把机械召回的候选直接当成最终关键词**
+   `keyword_candidates.py` 用规则筛出候选，规则命中不等于这个词重要，也不等于分级正确。必须结合完整上下文复核后再定级。跳过复核，输出的时间轴会满是无意义的强调点。
+
+2. **不要假设画面里的信息也被分析到了**
+   本技能只读文字稿，不做画面理解。台词没提但画面里有的东西（产品参数、界面细节、人物动作），它一概看不到。需要画面证据时必须人工补。
+
+3. **不要直接套用字幕字号建议到非竖屏**
+   所有字号、安全区、描边参数都是按 1080×1920 竖屏算的。横屏或方图必须重新换算，直接套会出现字压边或小到看不清。
+
+4. **不要让容器一进场就把内部内容全亮出来**
+   一个标题块或信号行组可以早进场，但它内部的每一行都是独立的定时资产，各自等到对应口播时间点才揭示。整块一个时间戳交出去，下游做出来就是"话还没说，答案已经在屏幕上"，悬念全没了。
+
+5. **不要把数字的口径写错**
+   口播说"月入十万"就必须是月度口径，说"去年进账一百万"就必须是年度。tier1 的数字条目必须同时记录数值和口播原话里的口径。这个错一旦上屏，整条视频的可信度就没了。
+
+6. **不要在人工确认前进入剪辑**
+   输出的是方案包不是 EDL。`analysis_status` 必须停在 `awaiting_human_confirmation`，校验器会拦截提前置为完成的情况。

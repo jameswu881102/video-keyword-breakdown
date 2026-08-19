@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.2.0] - 2026-08-19
+
+### Added
+- **`references/visual-treatment-spec.md`** — the presentation spec that tier1/tier3 entries hand
+  downstream. Previously a tier1 entry said only "standalone animated text", which downstream had to
+  interpret freshly every time. It now picks from six named forms (`holo_title`, `signal_rows`,
+  `icon_dock`, `mini_panel`, `data_strip`, `source_shot`) and carries required fields.
+- **Row-level reveal timing.** A container may enter early, but each row inside it is an independently
+  timed asset revealed at its own spoken cue. Handing the whole block one timestamp puts the answer
+  on screen before the sentence is finished.
+- **Spoken-unit matching for numbers.** Numeric tier1 entries now record both the value and the unit
+  as spoken (monthly / annual / one-time / MRR / ARR). Swapping them is the one on-screen error that
+  costs the whole video its credibility.
+- Layout spec for the split-screen case: left carries the argument, right carries the proof, at most
+  two vertical bands, subtitle band unavailable when the source already has captions.
+
+### Changed
+- Write path: inside a `talking-head-editing-workflow` project, output goes to `01_识别分析/关键词/`
+  rather than creating `edit/`. That project layout has seven fixed entries and validates against
+  them, so an extra directory fails the check.
+
+
 ## 0.1.0
 
 Initial public release.
